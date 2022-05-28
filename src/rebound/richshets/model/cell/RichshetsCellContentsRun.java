@@ -6,13 +6,13 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class RichshetCellContentsRun
+public class RichshetsCellContentsRun
 {
-	public static final RichshetCellContentsRun Blank = new RichshetCellContentsRun("", false, false, false, false, RichdatashetsCellRunScriptLevel.Normal, null);
+	public static final RichshetsCellContentsRun Blank = new RichshetsCellContentsRun("", false, false, false, false, RichshetsCellRunScriptLevel.Normal, null);
 	
 	
 	
-	public static enum RichdatashetsCellRunScriptLevel
+	public static enum RichshetsCellRunScriptLevel
 	{
 		Subscript,
 		Normal,
@@ -24,10 +24,10 @@ public class RichshetCellContentsRun
 	protected final boolean italic;
 	protected final boolean underline;
 	protected final boolean strikethrough;
-	protected final @Nonnull RichdatashetsCellRunScriptLevel scriptLevel;
-	protected final @Nullable RichshetColor textColor;
+	protected final @Nonnull RichshetsCellRunScriptLevel scriptLevel;
+	protected final @Nullable RichshetsColor textColor;
 	
-	public RichshetCellContentsRun(String contents, boolean bold, boolean italic, boolean underline, boolean strikethrough, RichdatashetsCellRunScriptLevel scriptLevel, RichshetColor textColor)
+	public RichshetsCellContentsRun(String contents, boolean bold, boolean italic, boolean underline, boolean strikethrough, RichshetsCellRunScriptLevel scriptLevel, RichshetsColor textColor)
 	{
 		this.contents = requireNonNull(contents);
 		this.bold = bold;
@@ -38,14 +38,14 @@ public class RichshetCellContentsRun
 		this.textColor = textColor;
 	}
 	
-	public RichshetCellContentsRun withOtherText(String newText)
+	public RichshetsCellContentsRun withOtherText(String newText)
 	{
-		return new RichshetCellContentsRun(newText, bold, italic, underline, strikethrough, scriptLevel, textColor);
+		return new RichshetsCellContentsRun(newText, bold, italic, underline, strikethrough, scriptLevel, textColor);
 	}
 	
-	public RichshetCellContentsRun withOtherTextResettingScriptLevel(String newText)
+	public RichshetsCellContentsRun withOtherTextResettingScriptLevel(String newText)
 	{
-		return new RichshetCellContentsRun(newText, bold, italic, underline, strikethrough, RichdatashetsCellRunScriptLevel.Normal, textColor);
+		return new RichshetsCellContentsRun(newText, bold, italic, underline, strikethrough, RichshetsCellRunScriptLevel.Normal, textColor);
 	}
 	
 	
@@ -75,7 +75,7 @@ public class RichshetCellContentsRun
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RichshetCellContentsRun other = (RichshetCellContentsRun) obj;
+		RichshetsCellContentsRun other = (RichshetsCellContentsRun) obj;
 		if (bold != other.bold)
 			return false;
 		if (contents == null)
@@ -128,12 +128,12 @@ public class RichshetCellContentsRun
 		return strikethrough;
 	}
 	
-	public RichdatashetsCellRunScriptLevel getScriptLevel()
+	public RichshetsCellRunScriptLevel getScriptLevel()
 	{
 		return scriptLevel;
 	}
 	
-	public RichshetColor getTextColor()
+	public RichshetsColor getTextColor()
 	{
 		return textColor;
 	}
@@ -142,6 +142,6 @@ public class RichshetCellContentsRun
 	@Override
 	public String toString()
 	{
-		return "RichdatashetsCellRun [contents=" + contents + ", bold=" + bold + ", italic=" + italic + ", underline=" + underline + ", strikethrough=" + strikethrough + ", scriptLevel=" + scriptLevel + ", textColor=" + textColor + "]";
+		return "RichshetsCellRun [contents=" + contents + ", bold=" + bold + ", italic=" + italic + ", underline=" + underline + ", strikethrough=" + strikethrough + ", scriptLevel=" + scriptLevel + ", textColor=" + textColor + "]";
 	}
 }

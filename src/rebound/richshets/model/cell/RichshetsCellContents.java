@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-import rebound.richshets.model.cell.RichshetCellContentsRun.RichdatashetsCellRunScriptLevel;
+import rebound.richshets.model.cell.RichshetsCellContentsRun.RichshetsCellRunScriptLevel;
 
 /**
  * + This doesn't support font family since that's definitely not portable outside of Google Sheets (or the same local spreadsheet program on different computers!)<br>
@@ -17,24 +17,24 @@ import rebound.richshets.model.cell.RichshetCellContentsRun.RichdatashetsCellRun
  * + Datashets supports boolean columns, but exposes them to client code as just strings of "true" and "false" (case very insensitive and not guaranteed in reading)!<br>
  */
 @Immutable
-public class RichshetCellContents
+public class RichshetsCellContents
 {
 	/**
 	 * Note that this is just for performance.<br>
 	 * There can be multiple instances of blank datashet cells (and indeed, equivalent non-blank ones), just like there can be multiple empty strings or "abc"'s
 	 * that are Java Reference-wise different (==) but equivalence-wise the same (.equals(), except that this doesn't support that ^^' )<br>
 	 */
-	public static final RichshetCellContents Blank = new RichshetCellContents(singletonList(RichshetCellContentsRun.Blank), null, null, null);
+	public static final RichshetsCellContents Blank = new RichshetsCellContents(singletonList(RichshetsCellContentsRun.Blank), null, null, null);
 	
 	
-	public static enum RichdatashetsJustification
+	public static enum RichshetsJustification
 	{
 		Left,
 		Center,
 		Right,
 	}
 	
-	public static enum RichdatashetsTextWrappingStrategy
+	public static enum RichshetsTextWrappingStrategy
 	{
 		Overflow,
 		Wrap,
@@ -46,17 +46,17 @@ public class RichshetCellContents
 	 * This list must never be empty; if the cell is empty, then use a single run of "" like just mentioned, so that there's not two competing standards for empty-cells X3
 	 * + Note that emptiness being "bold" and etc. only works if there is no text in the cell at all in Google Sheets and Gnumeric, so that's what we'll standardize on.
 	 */
-	protected final @Nonnull List<RichshetCellContentsRun> contents;
-	protected final @Nullable RichdatashetsJustification justification;
-	protected final @Nullable RichshetColor backgroundColor;
-	protected final @Nullable RichdatashetsTextWrappingStrategy wrappingStrategy;
+	protected final @Nonnull List<RichshetsCellContentsRun> contents;
+	protected final @Nullable RichshetsJustification justification;
+	protected final @Nullable RichshetsColor backgroundColor;
+	protected final @Nullable RichshetsTextWrappingStrategy wrappingStrategy;
 	
 	
 	/**
 	 * @param contents  an immutable copy is made so no worries about re-using the list provided here
 	 * @param justification  null means default based on language (eg, Left for English, Right for Arabic)
 	 */
-	public RichshetCellContents(List<RichshetCellContentsRun> contents, RichdatashetsJustification justification, RichshetColor backgroundColor, RichdatashetsTextWrappingStrategy wrappingStrategy)
+	public RichshetsCellContents(List<RichshetsCellContentsRun> contents, RichshetsJustification justification, RichshetsColor backgroundColor, RichshetsTextWrappingStrategy wrappingStrategy)
 	{
 		requireNonNull(contents);
 		
@@ -67,7 +67,7 @@ public class RichshetCellContents
 		}
 		else if (contents.size() != 1)
 		{
-			for (RichshetCellContentsRun r : contents)
+			for (RichshetsCellContentsRun r : contents)
 				if (r.getContents().isEmpty())
 					throw new IllegalArgumentException("No entry in runs-list may have empty text unless it's the only element (which is how an empty-text cell is encoded, since they can have formatting).");
 		}
@@ -100,14 +100,14 @@ public class RichshetCellContents
 		else
 		{
 			StringBuilder b = new StringBuilder();
-			for (RichshetCellContentsRun r : getContents())
+			for (RichshetsCellContentsRun r : getContents())
 				b.append(r.getContents());
 			return b.toString();
 		}
 	}
 	
 	
-	public RichshetCellContents withOtherText(String newText)
+	public RichshetsCellContents withOtherText(String newText)
 	{
 		String currentText = justText();
 		
@@ -118,27 +118,27 @@ public class RichshetCellContents
 		else
 		{
 			//Use the first formatting run for completely-replacing
-			return new RichshetCellContents(singletonList(contents.get(0).withOtherTextResettingScriptLevel(newText)), justification, backgroundColor, wrappingStrategy);
+			return new RichshetsCellContents(singletonList(contents.get(0).withOtherTextResettingScriptLevel(newText)), justification, backgroundColor, wrappingStrategy);
 		}
 	}
 	
 	
 	
-	public RichshetCellContents withOtherTextAppended(String newTextForEnd)
+	public RichshetsCellContents withOtherTextAppended(String newTextForEnd)
 	{
 		//Use the last formatting run for appending
 		
-		RichshetCellContentsRun last = contents.get(contents.size()-1);
+		RichshetsCellContentsRun last = contents.get(contents.size()-1);
 		
-		List<RichshetCellContentsRun> l;
+		List<RichshetsCellContentsRun> l;
 		{
 			int n = contents.size();
 			
-			if (last.getScriptLevel() == RichdatashetsCellRunScriptLevel.Normal)
+			if (last.getScriptLevel() == RichshetsCellRunScriptLevel.Normal)
 			{
 				//Replace the last element with a bigger version
 				
-				RichshetCellContentsRun newLast = last.withOtherText(last.getContents()+newTextForEnd);
+				RichshetsCellContentsRun newLast = last.withOtherText(last.getContents()+newTextForEnd);
 				
 				if (n == 1)
 					l = singletonList(newLast);
@@ -153,7 +153,7 @@ public class RichshetCellContents
 			{
 				//Tack on a new element on the last one
 				
-				RichshetCellContentsRun afterLast = last.withOtherTextResettingScriptLevel(newTextForEnd);
+				RichshetsCellContentsRun afterLast = last.withOtherTextResettingScriptLevel(newTextForEnd);
 				
 				l = new ArrayList<>(n+1);
 				l.addAll(contents);
@@ -161,28 +161,28 @@ public class RichshetCellContents
 			}
 		}
 		
-		return new RichshetCellContents(l, justification, backgroundColor, wrappingStrategy);
+		return new RichshetsCellContents(l, justification, backgroundColor, wrappingStrategy);
 	}
 	
 	
 	
 	
-	public List<RichshetCellContentsRun> getContents()
+	public List<RichshetsCellContentsRun> getContents()
 	{
 		return contents;
 	}
 	
-	public RichdatashetsJustification getJustification()
+	public RichshetsJustification getJustification()
 	{
 		return justification;
 	}
 	
-	public RichshetColor getBackgroundColor()
+	public RichshetsColor getBackgroundColor()
 	{
 		return backgroundColor;
 	}
 	
-	public RichdatashetsTextWrappingStrategy getWrappingStrategy()
+	public RichshetsTextWrappingStrategy getWrappingStrategy()
 	{
 		return wrappingStrategy;
 	}
@@ -214,7 +214,7 @@ public class RichshetCellContents
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RichshetCellContents other = (RichshetCellContents) obj;
+		RichshetsCellContents other = (RichshetsCellContents) obj;
 		if (backgroundColor == null)
 		{
 			if (other.backgroundColor != null)
@@ -241,6 +241,6 @@ public class RichshetCellContents
 	@Override
 	public String toString()
 	{
-		return "RichshetCellContents [contents=" + contents + ", justification=" + justification + ", backgroundColor=" + backgroundColor + ", wrappingStrategy=" + wrappingStrategy + "]";
+		return "RichshetsCellContents [contents=" + contents + ", justification=" + justification + ", backgroundColor=" + backgroundColor + ", wrappingStrategy=" + wrappingStrategy + "]";
 	}
 }
