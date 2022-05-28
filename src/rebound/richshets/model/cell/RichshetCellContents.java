@@ -24,7 +24,7 @@ public class RichshetCellContents
 	 * There can be multiple instances of blank datashet cells (and indeed, equivalent non-blank ones), just like there can be multiple empty strings or "abc"'s
 	 * that are Java Reference-wise different (==) but equivalence-wise the same (.equals(), except that this doesn't support that ^^' )<br>
 	 */
-	public static final RichshetCellContents Blank = new RichshetCellContents(singletonList(RichshetCellContentsRun.Blank), null, null);
+	public static final RichshetCellContents Blank = new RichshetCellContents(singletonList(RichshetCellContentsRun.Blank), null, null, null);
 	
 	
 	public static enum RichdatashetsJustification
@@ -32,6 +32,13 @@ public class RichshetCellContents
 		Left,
 		Center,
 		Right,
+	}
+	
+	public static enum RichdatashetsTextWrappingStrategy
+	{
+		Overflow,
+		Wrap,
+		Clip,
 	}
 	
 	/**
@@ -42,12 +49,14 @@ public class RichshetCellContents
 	protected final @Nonnull List<RichshetCellContentsRun> contents;
 	protected final @Nullable RichdatashetsJustification justification;
 	protected final @Nullable RichshetColor backgroundColor;
+	protected final @Nullable RichdatashetsTextWrappingStrategy wrappingStrategy;
+	
 	
 	/**
 	 * @param contents  an immutable copy is made so no worries about re-using the list provided here
 	 * @param justification  null means default based on language (eg, Left for English, Right for Arabic)
 	 */
-	public RichshetCellContents(List<RichshetCellContentsRun> contents, RichdatashetsJustification justification, RichshetColor backgroundColor)
+	public RichshetCellContents(List<RichshetCellContentsRun> contents, RichdatashetsJustification justification, RichshetColor backgroundColor, RichdatashetsTextWrappingStrategy wrappingStrategy)
 	{
 		requireNonNull(contents);
 		
@@ -66,6 +75,7 @@ public class RichshetCellContents
 		this.contents = unmodifiableList(new ArrayList<>(contents));
 		this.justification = justification;
 		this.backgroundColor = backgroundColor;
+		this.wrappingStrategy = wrappingStrategy;
 	}
 	
 	
@@ -108,7 +118,7 @@ public class RichshetCellContents
 		else
 		{
 			//Use the first formatting run for completely-replacing
-			return new RichshetCellContents(singletonList(contents.get(0).withOtherTextResettingScriptLevel(newText)), justification, backgroundColor);
+			return new RichshetCellContents(singletonList(contents.get(0).withOtherTextResettingScriptLevel(newText)), justification, backgroundColor, wrappingStrategy);
 		}
 	}
 	
@@ -151,8 +161,32 @@ public class RichshetCellContents
 			}
 		}
 		
-		return new RichshetCellContents(l, justification, backgroundColor);
+		return new RichshetCellContents(l, justification, backgroundColor, wrappingStrategy);
 	}
+	
+	
+	
+	
+	public List<RichshetCellContentsRun> getContents()
+	{
+		return contents;
+	}
+	
+	public RichdatashetsJustification getJustification()
+	{
+		return justification;
+	}
+	
+	public RichshetColor getBackgroundColor()
+	{
+		return backgroundColor;
+	}
+	
+	public RichdatashetsTextWrappingStrategy getWrappingStrategy()
+	{
+		return wrappingStrategy;
+	}
+	
 	
 	
 	
@@ -166,9 +200,9 @@ public class RichshetCellContents
 		result = prime * result + ((backgroundColor == null) ? 0 : backgroundColor.hashCode());
 		result = prime * result + ((contents == null) ? 0 : contents.hashCode());
 		result = prime * result + ((justification == null) ? 0 : justification.hashCode());
+		result = prime * result + ((wrappingStrategy == null) ? 0 : wrappingStrategy.hashCode());
 		return result;
 	}
-	
 	
 	
 	@Override
@@ -197,24 +231,9 @@ public class RichshetCellContents
 			return false;
 		if (justification != other.justification)
 			return false;
+		if (wrappingStrategy != other.wrappingStrategy)
+			return false;
 		return true;
-	}
-	
-	
-	
-	public List<RichshetCellContentsRun> getContents()
-	{
-		return contents;
-	}
-	
-	public RichdatashetsJustification getJustification()
-	{
-		return justification;
-	}
-	
-	public RichshetColor getBackgroundColor()
-	{
-		return backgroundColor;
 	}
 	
 	
@@ -222,6 +241,6 @@ public class RichshetCellContents
 	@Override
 	public String toString()
 	{
-		return "RichdatashetsCell [contents=" + contents + ", justification=" + justification + ", backgroundColor=" + backgroundColor + "]";
+		return "RichshetCellContents [contents=" + contents + ", justification=" + justification + ", backgroundColor=" + backgroundColor + ", wrappingStrategy=" + wrappingStrategy + "]";
 	}
 }
